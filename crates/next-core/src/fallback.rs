@@ -17,8 +17,9 @@ use turbopack_node::execution_context::ExecutionContextVc;
 
 use crate::{
     next_client::context::{
-        get_client_chunking_context, get_client_environment, get_client_module_options_context,
-        get_client_resolve_options_context, get_client_runtime_entries, ClientContextType,
+        get_client_chunking_context, get_client_compile_time_info,
+        get_client_module_options_context, get_client_resolve_options_context,
+        get_client_runtime_entries, ClientContextType,
     },
     next_config::NextConfigVc,
     next_import_map::{insert_alias_option, insert_next_shared_aliases},
@@ -35,17 +36,21 @@ pub async fn get_fallback_page(
     next_config: NextConfigVc,
 ) -> Result<DevHtmlAssetVc> {
     let ty = Value::new(ClientContextType::Fallback);
-    let environment = get_client_environment(browserslist_query);
+    let client_compile_time_info = get_client_compile_time_info(browserslist_query);
     let resolve_options_context = get_client_resolve_options_context(project_path, ty, next_config);
     let module_options_context = get_client_module_options_context(
         project_path,
         execution_context,
-        environment,
+        client_compile_time_info.environment(),
         ty,
         next_config,
     );
-    let chunking_context =
-        get_client_chunking_context(project_path, dev_server_root, environment, ty);
+    let chunking_context = get_client_chunking_context(
+        project_path,
+        dev_server_root,
+        client_compile_time_info.environment(),
+        ty,
+    );
     let entries = get_client_runtime_entries(project_path, env, ty, next_config);
 
     let mut import_map = ImportMap::empty();
@@ -60,7 +65,7 @@ pub async fn get_fallback_page(
 
     let context: AssetContextVc = ModuleAssetContextVc::new(
         TransitionsByNameVc::cell(HashMap::new()),
-        environment,
+        client_compile_time_info,
         module_options_context,
         resolve_options_context.with_extended_import_map(import_map.cell()),
     )

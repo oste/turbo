@@ -55,7 +55,7 @@ pub async fn get_evaluate_pool(
         intermediate_output_path,
         intermediate_output_path.join("chunks"),
         intermediate_output_path.join("assets"),
-        context.environment(),
+        context.compile_time_info().environment(),
     )
     .build();
 
@@ -64,7 +64,7 @@ pub async fn get_evaluate_pool(
         context,
         Value::new(EcmascriptModuleAssetType::Typescript),
         EcmascriptInputTransformsVc::cell(vec![EcmascriptInputTransform::TypeScript]),
-        context.environment(),
+        context.compile_time_info(),
     )
     .as_asset();
 
@@ -89,7 +89,7 @@ pub async fn get_evaluate_pool(
         context,
         Value::new(EcmascriptModuleAssetType::Typescript),
         EcmascriptInputTransformsVc::cell(vec![EcmascriptInputTransform::TypeScript]),
-        context.environment(),
+        context.compile_time_info(),
         InnerAssetsVc::cell(HashMap::from([
             ("INNER".to_string(), module_asset),
             ("RUNTIME".to_string(), runtime_asset),

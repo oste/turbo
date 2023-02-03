@@ -30,6 +30,7 @@ use turbopack::{
 use turbopack_core::{
     asset::{Asset, AssetContent, AssetContentVc, AssetVc},
     chunk::{dev::DevChunkingContextVc, ChunkableAsset, ChunkableAssetVc},
+    compile_time_info::CompileTimeInfo,
     context::{AssetContext, AssetContextVc},
     environment::{BrowserEnvironment, EnvironmentIntention, EnvironmentVc, ExecutionEnvironment},
     issue::IssueVc,
@@ -157,10 +158,11 @@ async fn run_test(resource: String) -> Result<FileSystemPathVc> {
         )),
         Value::new(EnvironmentIntention::Client),
     );
+    let compile_time_info = CompileTimeInfo { environment: env }.cell();
 
     let context: AssetContextVc = ModuleAssetContextVc::new(
         TransitionsByNameVc::cell(HashMap::new()),
-        env,
+        compile_time_info,
         ModuleOptionsContext {
             enable_jsx: true,
             enable_emotion: true,
