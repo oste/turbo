@@ -205,7 +205,7 @@ pub async fn route(
         project_root,
         project_root,
         context,
-        intermediate_output_path,
+        intermediate_output_path.join("router"),
         Some(extra_configs),
         vec![
             JsonValueVc::cell(request),
