@@ -160,6 +160,7 @@ export default function startHandler({
         previewModeEncryptionKey: "",
         previewModeSigningKey: "",
       },
+      params: renderData.params,
       basePath: "",
       resolvedUrl: renderData.url,
       optimizeFonts: false,
