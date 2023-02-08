@@ -11,8 +11,8 @@ type RouterRequest = {
   method: string;
   pathname: string;
   // TODO: not passed to request
-  headers: Record<string, string>;
-  query: Record<string, string>;
+  rawHeaders: Array<[string, string]>;
+  rawQuery: string;
 };
 
 type RouteResult = {
@@ -75,8 +75,8 @@ export default async function route(
       server,
       routerRequest.method,
       routerRequest.pathname,
-      routerRequest.query,
-      routerRequest.headers
+      routerRequest.rawQuery,
+      routerRequest.rawHeaders
     );
 
     // Send the clientRequest, so the server parses everything. We can then pass
