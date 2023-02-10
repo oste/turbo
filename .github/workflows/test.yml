@@ -1042,8 +1042,8 @@ jobs:
     if: needs.determine_jobs.outputs.rust == 'true' && needs.determine_jobs.outputs.push == 'true'
     uses: ./.github/workflows/nextjs-integration-test.yml
     # Uncomment to test against a specific version of Next.js
-    # with:
-    # version: v13.1.6-canary.0
+    with:
+      version: run-test-verbose
 
   format_lint:
     name: Formatting

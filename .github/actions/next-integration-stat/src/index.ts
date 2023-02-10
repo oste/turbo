@@ -741,6 +741,7 @@ async function run() {
 
   const postCommentAsync = createCommentPostAsync(octokit, prNumber);
 
+  let ttt = [];
   // Consturct a comment body to post test report with summary & full details.
   const comments = failedJobResults.result.reduce((acc, value, idx) => {
     const { name: failedTest, data: testData } = value;
@@ -749,6 +750,10 @@ async function run() {
     // each job have nested array of test results
     // Fill in each individual test suite failures
     const groupedFails = {};
+    if (testData.testResults?.length !== 1) {
+      throw new Error("failed");
+    }
+
     const testResult = testData.testResults?.[0];
     const resultMessage = stripAnsi(testResult?.message);
     const failedAssertions = testResult?.assertionResults?.filter(
@@ -765,6 +770,7 @@ async function run() {
     }
 
     commentValues.push(`\`${failedTest}\``);
+    ttt.push(`\`${failedTest}\``);
 
     for (const group of Object.keys(groupedFails).sort()) {
       const fails = groupedFails[group];
@@ -823,9 +829,9 @@ async function run() {
           failedJobResults,
           shouldReportSlack
         ),
+        ...ttt,
       ],
     },
-    ...comments,
   ];
   const isMultipleComments = comments.length > 1;
 

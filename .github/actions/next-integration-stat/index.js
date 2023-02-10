@@ -16627,47 +16627,56 @@
           shouldDiffWithMain
         );
         const postCommentAsync = createCommentPostAsync(octokit, prNumber);
+        let ttt = [];
         // Consturct a comment body to post test report with summary & full details.
         const comments = failedJobResults.result.reduce((acc, value, idx) => {
-          var _a, _b, _c;
+          var _a, _b, _c, _d;
           const { name: failedTest, data: testData } = value;
           const commentValues = [];
           // each job have nested array of test results
           // Fill in each individual test suite failures
           const groupedFails = {};
-          const testResult =
-            (_a = testData.testResults) === null || _a === void 0
+          if (
+            ((_a = testData.testResults) === null || _a === void 0
               ? void 0
-              : _a[0];
+              : _a.length) !== 1
+          ) {
+            throw new Error("failed");
+          }
+          const testResult =
+            (_b = testData.testResults) === null || _b === void 0
+              ? void 0
+              : _b[0];
           const resultMessage = stripAnsi(
             testResult === null || testResult === void 0
               ? void 0
               : testResult.message
           );
           const failedAssertions =
-            (_b =
+            (_c =
               testResult === null || testResult === void 0
                 ? void 0
-                : testResult.assertionResults) === null || _b === void 0
+                : testResult.assertionResults) === null || _c === void 0
               ? void 0
-              : _b.filter((res) => res.status === "failed");
+              : _c.filter((res) => res.status === "failed");
           for (const fail of failedAssertions !== null &&
           failedAssertions !== void 0
             ? failedAssertions
             : []) {
             const ancestorKey =
-              (_c =
+              (_d =
                 fail === null || fail === void 0
                   ? void 0
-                  : fail.ancestorTitles) === null || _c === void 0
+                  : fail.ancestorTitles) === null || _d === void 0
                 ? void 0
-                : _c.join(" > ");
+                : _d.join(" > ");
             if (!groupedFails[ancestorKey]) {
               groupedFails[ancestorKey] = [];
             }
             groupedFails[ancestorKey].push(fail);
           }
           commentValues.push(`\`${failedTest}\``);
+          ttt.push(`\`${failedTest}\``);
           for (const group of Object.keys(groupedFails).sort()) {
             const fails = groupedFails[group];
             commentValues.push(`\n`);
@@ -16721,9 +16730,9 @@
                 failedJobResults,
                 shouldReportSlack
               ),
+              ...ttt,
             ],
           },
-          ...comments,
         ];
         const isMultipleComments = comments.length > 1;
         try {
